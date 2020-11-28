@@ -7246,6 +7246,7 @@ enum CXChildVisitResult AnnotateTokensWorker::Visit(CXCursor cursor,
     else if (cursor.kind == CXCursor_StructDecl ||
              cursor.kind == CXCursor_ClassDecl ||
              cursor.kind == CXCursor_ClassTemplate ||
+             cursor.kind == CXCursor_ClassTemplateSpecialization ||
              cursor.kind == CXCursor_ClassTemplatePartialSpecialization) {
       if (const Decl *D = getCursorDecl(cursor))
         if (D->hasAttr<FinalAttr>())

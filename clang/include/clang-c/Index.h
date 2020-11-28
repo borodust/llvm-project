@@ -1781,30 +1781,30 @@ enum CXCursorKind {
   /** A C++ class template partial specialization. */
   CXCursor_ClassTemplatePartialSpecialization = 32,
   /** */
-  CXCursor_ClassTemplateSpecialization = 10032,
+  CXCursor_ClassTemplateSpecialization = 33,
   /** A C++ namespace alias declaration. */
-  CXCursor_NamespaceAlias = 33,
+  CXCursor_NamespaceAlias = 34,
   /** A C++ using directive. */
-  CXCursor_UsingDirective = 34,
+  CXCursor_UsingDirective = 35,
   /** A C++ using declaration. */
-  CXCursor_UsingDeclaration = 35,
+  CXCursor_UsingDeclaration = 36,
   /** A C++ alias declaration */
-  CXCursor_TypeAliasDecl = 36,
+  CXCursor_TypeAliasDecl = 37,
   /** An Objective-C \@synthesize definition. */
-  CXCursor_ObjCSynthesizeDecl = 37,
+  CXCursor_ObjCSynthesizeDecl = 38,
   /** An Objective-C \@dynamic definition. */
-  CXCursor_ObjCDynamicDecl = 38,
+  CXCursor_ObjCDynamicDecl = 39,
   /** An access specifier. */
-  CXCursor_CXXAccessSpecifier = 39,
+  CXCursor_CXXAccessSpecifier = 40,
 
   CXCursor_FirstDecl = CXCursor_UnexposedDecl,
   CXCursor_LastDecl = CXCursor_CXXAccessSpecifier,
 
   /* References */
-  CXCursor_FirstRef = 40, /* Decl references */
-  CXCursor_ObjCSuperClassRef = 40,
-  CXCursor_ObjCProtocolRef = 41,
-  CXCursor_ObjCClassRef = 42,
+  CXCursor_FirstRef = 50, /* Decl references */
+  CXCursor_ObjCSuperClassRef = 50,
+  CXCursor_ObjCProtocolRef = 51,
+  CXCursor_ObjCClassRef = 52,
   /**
    * A reference to a type declaration.
    *
@@ -1820,22 +1820,22 @@ enum CXCursorKind {
    * while the type of the variable "size" is referenced. The cursor
    * referenced by the type of size is the typedef for size_type.
    */
-  CXCursor_TypeRef = 43,
-  CXCursor_CXXBaseSpecifier = 44,
+  CXCursor_TypeRef = 53,
+  CXCursor_CXXBaseSpecifier = 54,
   /**
    * A reference to a class template, function template, template
    * template parameter, or class template partial specialization.
    */
-  CXCursor_TemplateRef = 45,
+  CXCursor_TemplateRef = 55,
   /**
    * A reference to a namespace or namespace alias.
    */
-  CXCursor_NamespaceRef = 46,
+  CXCursor_NamespaceRef = 56,
   /**
    * A reference to a member of a struct, union, or class that occurs in
    * some non-expression context, e.g., a designated initializer.
    */
-  CXCursor_MemberRef = 47,
+  CXCursor_MemberRef = 57,
   /**
    * A reference to a labeled statement.
    *
@@ -1851,7 +1851,7 @@ enum CXCursorKind {
    *
    * A label reference cursor refers to a label statement.
    */
-  CXCursor_LabelRef = 48,
+  CXCursor_LabelRef = 58,
 
   /**
    * A reference to a set of overloaded functions or function templates
@@ -1889,13 +1889,13 @@ enum CXCursorKind {
    * \c clang_getOverloadedDecl() can be used to retrieve the definitions
    * referenced by this cursor.
    */
-  CXCursor_OverloadedDeclRef = 49,
+  CXCursor_OverloadedDeclRef = 59,
 
   /**
    * A reference to a variable that occurs in some non-expression
    * context, e.g., a C++ lambda capture list.
    */
-  CXCursor_VariableRef = 50,
+  CXCursor_VariableRef = 60,
 
   CXCursor_LastRef = CXCursor_VariableRef,
 

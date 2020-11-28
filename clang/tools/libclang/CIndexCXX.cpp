@@ -57,7 +57,8 @@ enum CXCursorKind clang_getTemplateCursorKind(CXCursor C) {
                            = dyn_cast_or_null<TemplateDecl>(getCursorDecl(C)))
       return MakeCXCursor(Template->getTemplatedDecl(), getCursorTU(C)).kind;
     break;
-      
+
+  case CXCursor_ClassTemplateSpecialization:
   case CXCursor_ClassTemplatePartialSpecialization:
     if (const ClassTemplateSpecializationDecl *PartialSpec
           = dyn_cast_or_null<ClassTemplatePartialSpecializationDecl>(
