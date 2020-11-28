@@ -506,7 +506,13 @@ bool CursorVisitor::VisitChildren(CXCursor Cursor) {
     if (!D)
       return false;
 
-    return VisitAttributes(D) || Visit(D);
+    if (VisitAttributes(D))
+      return true;
+
+    if (Cursor.kind == CXCursor_ClassTemplateSpecialization)
+      return VisitClassTemplateSpecializationDecl(static_cast<ClassTemplateSpecializationDecl*>(D), /*EnforceVisitBody*/ true);
+    else
+      return Visit(D);
   }
 
   if (clang_isStatement(Cursor.kind)) {
@@ -712,21 +718,23 @@ bool CursorVisitor::VisitTypedefDecl(TypedefDecl *D) {
 bool CursorVisitor::VisitTagDecl(TagDecl *D) { return VisitDeclContext(D); }
 
 bool CursorVisitor::VisitClassTemplateSpecializationDecl(
-    ClassTemplateSpecializationDecl *D) {
-  bool ShouldVisitBody = false;
-  switch (D->getSpecializationKind()) {
-  case TSK_Undeclared:
-  case TSK_ImplicitInstantiation:
-    // Nothing to visit
-    return false;
+    ClassTemplateSpecializationDecl *D, bool EnforceVisitBody) {
+  bool ShouldVisitBody = EnforceVisitBody;
+  if (!EnforceVisitBody) {
+    switch (D->getSpecializationKind()) {
+    case TSK_Undeclared:
+    case TSK_ImplicitInstantiation:
+      // Nothing to visit
+      return false;
 
-  case TSK_ExplicitInstantiationDeclaration:
-  case TSK_ExplicitInstantiationDefinition:
-    break;
+    case TSK_ExplicitInstantiationDeclaration:
+    case TSK_ExplicitInstantiationDefinition:
+      break;
 
-  case TSK_ExplicitSpecialization:
-    ShouldVisitBody = true;
-    break;
+    case TSK_ExplicitSpecialization:
+      ShouldVisitBody = true;
+      break;
+    }
   }
 
   // Visit the template arguments used in the specialization.
@@ -955,7 +963,18 @@ bool CursorVisitor::VisitClassTemplateDecl(ClassTemplateDecl *D) {
     return true;
 
   auto *CD = D->getTemplatedDecl();
-  return VisitAttributes(CD) || VisitCXXRecordDecl(CD);
+  if (VisitAttributes(CD))
+    return true;
+  if (VisitCXXRecordDecl(CD))
+    return true;
+
+  for (auto *Child : D->specializations())
+    if (Visit(MakeCXCursor(Child, TU)))
+      return true; // FIXME do this for function and var templates too.
+      // inspired by tools/clang/lib/AST/ASTDumper.cpp, ASTDumper::VisitTemplateDecl
+      // which is called from VisitClassTemplateDecl etc.
+
+  return false;
 }
 
 bool CursorVisitor::VisitTemplateTemplateParmDecl(TemplateTemplateParmDecl *D) {
@@ -5564,6 +5583,8 @@ CXString clang_getCursorKindSpelling(enum CXCursorKind Kind) {
     return cxstring::createRef("ClassTemplate");
   case CXCursor_ClassTemplatePartialSpecialization:
     return cxstring::createRef("ClassTemplatePartialSpecialization");
+  case CXCursor_ClassTemplateSpecialization:
+    return cxstring::createRef("ClassTemplateSpecialization");
   case CXCursor_NamespaceAlias:
     return cxstring::createRef("NamespaceAlias");
   case CXCursor_UsingDirective:
@@ -7302,6 +7323,7 @@ enum CXChildVisitResult AnnotateTokensWorker::Visit(CXCursor cursor,
     else if (cursor.kind == CXCursor_StructDecl ||
              cursor.kind == CXCursor_ClassDecl ||
              cursor.kind == CXCursor_ClassTemplate ||
+             cursor.kind == CXCursor_ClassTemplateSpecialization ||
              cursor.kind == CXCursor_ClassTemplatePartialSpecialization) {
       if (const Decl *D = getCursorDecl(cursor))
         if (D->hasAttr<FinalAttr>())
