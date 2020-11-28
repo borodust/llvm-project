@@ -1780,6 +1780,8 @@ enum CXCursorKind {
   CXCursor_ClassTemplate = 31,
   /** A C++ class template partial specialization. */
   CXCursor_ClassTemplatePartialSpecialization = 32,
+  /** */
+  CXCursor_ClassTemplateSpecialization = 10032,
   /** A C++ namespace alias declaration. */
   CXCursor_NamespaceAlias = 33,
   /** A C++ using directive. */
@@ -2659,6 +2661,31 @@ enum CXCursorKind {
    * A code completion overload candidate.
    */
   CXCursor_OverloadCandidate = 700
+};
+
+/**
+ * \brief Describes the kind of template specialization a cursor refers to.
+ */
+enum CXTemplateSpecializationKind {
+
+    /// This template specialization was formed from a template-id but
+    /// has not yet been declared, defined, or instantiated.
+    CXTSK_Undeclared = 0,
+    /// This template specialization was implicitly instantiated from a
+    /// template. (C++ [temp.inst]).
+    CXTSK_ImplicitInstantiation,
+    /// This template specialization was declared or defined by an
+    /// explicit specialization (C++ [temp.expl.spec]) or partial
+    /// specialization (C++ [temp.class.spec]).
+    CXTSK_ExplicitSpecialization,
+    /// This template specialization was instantiated from a template
+    /// due to an explicit instantiation declaration request
+    /// (C++11 [temp.explicit]).
+    CXTSK_ExplicitInstantiationDeclaration,
+    /// This template specialization was instantiated from a template
+    /// due to an explicit instantiation definition request
+    /// (C++ [temp.explicit]).
+    CXTSK_ExplicitInstantiationDefinition
 };
 
 /**
@@ -4815,6 +4842,24 @@ CINDEX_LINKAGE unsigned clang_CXXMethod_isConst(CXCursor C);
  * \c CXCursor_NoDeclFound.
  */
 CINDEX_LINKAGE enum CXCursorKind clang_getTemplateCursorKind(CXCursor C);
+
+/**
+ * \brief Given a cursor that represents a template, determine the kind
+ * of specialization (e.g. implicit or explicit instantiation)
+ *
+ * This routine can be used to eliminate duplicate explicit template
+ * instantiations that occur both as a child of the template, and at
+ * the place where they got explicitly instantiated. By ignoring explicit
+ * instantiations which parent is / isn't the template itself, no
+ * duplicates will occur.
+ *
+ * \param C The cursor to query. This cursor should represent a template
+ * declaration.
+ *
+ * \returns The template specialization kind. If \p C is not a template, returns
+ * \c CXTSK_Undeclared.
+ */
+CINDEX_LINKAGE enum CXTemplateSpecializationKind clang_getTemplateSpecializationKind(CXCursor C);
 
 /**
  * Given a cursor that may represent a specialization or instantiation

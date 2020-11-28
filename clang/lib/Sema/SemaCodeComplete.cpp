@@ -3843,6 +3843,8 @@ CXCursorKind clang::getCursorKindForDecl(const Decl *D) {
     return CXCursor_CXXAccessSpecifier;
   case Decl::ClassTemplatePartialSpecialization:
     return CXCursor_ClassTemplatePartialSpecialization;
+  case Decl::ClassTemplateSpecialization:
+    return CXCursor_ClassTemplateSpecialization;
   case Decl::UsingDirective:
     return CXCursor_UsingDirective;
   case Decl::StaticAssert:

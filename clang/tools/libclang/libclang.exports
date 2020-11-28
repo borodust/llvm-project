@@ -274,6 +274,7 @@ clang_getSpecializedCursorTemplate
 clang_getSpellingLocation
 clang_getTUResourceUsageName
 clang_getTemplateCursorKind
+clang_getTemplateSpecializationKind
 clang_getToken
 clang_getTokenExtent
 clang_getTokenKind
