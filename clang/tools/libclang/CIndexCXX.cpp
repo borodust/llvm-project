@@ -57,7 +57,8 @@ enum CXCursorKind clang_getTemplateCursorKind(CXCursor C) {
                            = dyn_cast_or_null<TemplateDecl>(getCursorDecl(C)))
       return MakeCXCursor(Template->getTemplatedDecl(), getCursorTU(C)).kind;
     break;
-      
+
+  case CXCursor_ClassTemplateSpecialization:
   case CXCursor_ClassTemplatePartialSpecialization:
     if (const ClassTemplateSpecializationDecl *PartialSpec
           = dyn_cast_or_null<ClassTemplatePartialSpecializationDecl>(
@@ -77,6 +78,25 @@ enum CXCursorKind clang_getTemplateCursorKind(CXCursor C) {
   }
   
   return CXCursor_NoDeclFound;
+}
+
+enum CXTemplateSpecializationKind clang_getTemplateSpecializationKind(CXCursor C) {
+  using namespace clang::cxcursor;
+  
+  if (C.kind == CXCursor_ClassTemplateSpecialization)
+  {
+    switch (static_cast<const ClassTemplateSpecializationDecl *>(getCursorDecl(C))->getSpecializationKind())
+    {
+      #define TRANSL(val) case val: return CX##val;
+      TRANSL(TSK_Undeclared)
+      TRANSL(TSK_ImplicitInstantiation)
+      TRANSL(TSK_ExplicitSpecialization)
+      TRANSL(TSK_ExplicitInstantiationDeclaration)
+      TRANSL(TSK_ExplicitInstantiationDefinition)
+      #undef TRANSL
+    }
+  }
+  return CXTSK_Undeclared;
 }
 
 CXCursor clang_getSpecializedCursorTemplate(CXCursor C) {
