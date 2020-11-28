@@ -206,7 +206,7 @@ public:
   bool VisitTranslationUnitDecl(TranslationUnitDecl *D);
   bool VisitTypedefDecl(TypedefDecl *D);
   bool VisitTagDecl(TagDecl *D);
-  bool VisitClassTemplateSpecializationDecl(ClassTemplateSpecializationDecl *D);
+  bool VisitClassTemplateSpecializationDecl(ClassTemplateSpecializationDecl *D, bool EnforceVisitBody = false);
   bool VisitClassTemplatePartialSpecializationDecl(
       ClassTemplatePartialSpecializationDecl *D);
   bool VisitTemplateTypeParmDecl(TemplateTypeParmDecl *D);
